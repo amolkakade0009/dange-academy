@@ -2,6 +2,7 @@
   <configuration default="false" name="dangeacademy" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.dangeacademy.ClassesManagementApplication" />
     <module name="classes-management" />
+    <shortenClasspath name="ARGS_FILE" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "courses")
@@ -14,7 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Course {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +31,22 @@ public class Course {
     @Column(nullable = false)
     private String description;
 
-    @NotNull(message = "Fees is required")
-    @Positive(message = "Fees must be greater than 0")
+    @NotNull(message = "price is required")
+    @Positive(message = "price must be greater than 0")
     @Column(nullable = false)
-    private Double fees;
+    private Double price;
 
+/*
     @NotBlank(message = "Video URL is required")
-    @Column(nullable = false)
-    private String videoUrl;
+*/
+    @Column
+    private String introVideoUrl;
+
+    @Column
+    private String thumbnailUrl;
+
+    @Column
+    private Long durationInSeconds;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -46,11 +55,19 @@ public class Course {
     @Column(nullable = false, updatable = false)
     private LocalDateTime uploadedDate;
 
+    @Column
     private LocalDateTime updatedDate;
 
     @Column(nullable = false)
     @Builder.Default
     private Integer enrolledCount = 0;
+
+    @OneToMany(mappedBy = "course",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Chapter> chapters = new ArrayList<>();
+
+
 
     @PrePersist
     public void prePersist() {

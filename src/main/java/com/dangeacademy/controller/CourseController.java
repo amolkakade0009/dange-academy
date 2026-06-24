@@ -5,8 +5,10 @@ import com.dangeacademy.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,10 +23,14 @@ public class CourseController {
     private final CourseService courseService;
 
     // Create Course
-    @PostMapping("create")
-    public ResponseEntity<Course> createCourse(@Valid @RequestBody Course course) {
+    @PostMapping(value = "/create",
+                    consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
+    public ResponseEntity<Course> createCourse(
+            @Valid @RequestPart("course") Course course ,
+            @RequestPart("videoFile")MultipartFile videoFile,
+            @RequestPart("thumnail")MultipartFile thumnailFile) {
 
-        Course savedCourse = courseService.createCourse(course);
+        Course savedCourse = courseService.createCourse(course, videoFile, thumnailFile);
 
         return new ResponseEntity<>(savedCourse, HttpStatus.CREATED);
     }
@@ -70,4 +76,24 @@ public class CourseController {
         );
     }
 
+
+    @PostMapping("/{courseId}/thumbnail")
+    public ResponseEntity<Course> uploadThumbnail(
+            @PathVariable Long courseId,
+            @RequestParam("file") MultipartFile file) {
+
+        return ResponseEntity.ok(
+                courseService.updateThumbnail(courseId, file)
+        );
+    }
+
+    @PutMapping("/{courseId}/duration")
+    public ResponseEntity<Course> updateDuration(
+            @PathVariable Long courseId,
+            @RequestParam Long durationInSeconds) {
+
+        return ResponseEntity.ok(
+                courseService.updateDuration(courseId, durationInSeconds)
+        );
+    }
 }
