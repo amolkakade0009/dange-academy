@@ -2,6 +2,7 @@ package com.dangeacademy.service.impl;
 
 import com.dangeacademy.dto.UserRequestDto;
 import com.dangeacademy.dto.UserResponseDto;
+import com.dangeacademy.entity.Role;
 import com.dangeacademy.entity.User;
 import com.dangeacademy.repository.UserRepository;
 import com.dangeacademy.service.UserService;
@@ -18,36 +19,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
-    public User register(User user) {
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
-    }
-
-
-
-    @Override
-    public UserResponseDto createUser(UserRequestDto dto) {
-
-        User user = User.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .mobileNumber(dto.getMobileNumber())
-                .password(dto.getPassword())
-                .role(dto.getRole())
-                .build();
-
-        User savedUser = userRepository.save(user);
-
-        return mapToResponse(savedUser);
-    }
-
     @Override
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
+                .filter(user -> user.getRole() == Role.STUDENT)
                 .map(this::mapToResponse)  // this is an shoer form of " .map(user -> mapToResponse(user)) "
                 .toList();
     }

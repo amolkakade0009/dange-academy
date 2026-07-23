@@ -21,14 +21,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // Create User
-    @PostMapping("create")
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto) {
-
-        UserResponseDto response = userService.createUser(dto);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
 
     // Get All Users
     @GetMapping()

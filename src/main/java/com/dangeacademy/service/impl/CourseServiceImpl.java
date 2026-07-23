@@ -2,10 +2,13 @@ package com.dangeacademy.service.impl;
 
 import com.dangeacademy.client.CloudflareClient;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
+import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.entity.Course;
 import com.dangeacademy.exception.CourseNotFoundException;
 import com.dangeacademy.exception.ResourceNotFoundException;
+import com.dangeacademy.repository.ChapterRepository;
 import com.dangeacademy.repository.CourseRepository;
+import com.dangeacademy.service.ChapterService;
 import com.dangeacademy.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +21,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final CloudflareClient cloudflareClient;
-
+     private final ChapterService chapterService;
     @Override
     public Course createCourse(Course course) {
 
@@ -63,6 +66,7 @@ public class CourseServiceImpl implements CourseService {
         existingCourse.setCourseName(course.getCourseName());
         existingCourse.setDescription(course.getDescription());
         existingCourse.setPrice(course.getPrice());
+        existingCourse.setCourseValidity(course.getCourseValidity());
         existingCourse.setStatus(course.getStatus());
         existingCourse.setIntroVideoUid(course.getIntroVideoUid());
 
@@ -78,6 +82,10 @@ public class CourseServiceImpl implements CourseService {
                                 "Course Not Found With Id : " + id
                         ));
 
+        List<Chapter> chapterList = course.getChapters();
+
+        chapterList.forEach(chapter -> chapterService.deleteChapter(chapter.getId()));
+
         if (course.getIntroVideoUid() != null
                 && !course.getIntroVideoUid().isBlank()) {
 
@@ -88,7 +96,7 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.delete(course);
     }
 
-    @Override
+    /*@Override
     public Course updateDuration(Long courseId, Long durationInSeconds) {
 
         Course course = courseRepository.findById(courseId)
@@ -100,6 +108,6 @@ public class CourseServiceImpl implements CourseService {
         course.setDurationInSeconds(durationInSeconds);
 
         return courseRepository.save(course);
-    }
+    }*/
 
 }

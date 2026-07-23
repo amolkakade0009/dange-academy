@@ -1,5 +1,6 @@
 package com.dangeacademy.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Course {
 
     @Id
@@ -43,7 +45,7 @@ public class Course {
     private String introVideoUid;
 
     @Column
-    private Long durationInSeconds;
+    private int courseValidity; // in months
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -62,6 +64,7 @@ public class Course {
     @OneToMany(mappedBy = "course",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @JsonManagedReference
     private List<Chapter> chapters = new ArrayList<>();
 
 

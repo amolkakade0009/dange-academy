@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courses")
 @RequiredArgsConstructor
 public class CourseController {
 
     private final CourseService courseService;
 
     // Create Course
-    @PostMapping("/admin/create")
+    @PostMapping("/admin/course/create")
     public ResponseEntity<Course> createCourse(
             @Valid @RequestBody Course course) {
 
@@ -29,14 +28,14 @@ public class CourseController {
     }
 
     // Get All Courses
-    @GetMapping
+    @GetMapping("/student/courses")
     public ResponseEntity<List<Course>> getAllCourses() {
 
         return ResponseEntity.ok(courseService.getAllCourses());
     }
 
     // Get Course By Id
-    @GetMapping("/{id}")
+    @GetMapping("/student/course/{id}")
     public ResponseEntity<Course> getCourseById(
             @PathVariable Long id) {
 
@@ -46,7 +45,7 @@ public class CourseController {
     }
 
     // Update Course
-    @PutMapping("/{id}")
+    @PutMapping("/admin/course/{id}")
     public ResponseEntity<Course> updateCourse(
             @PathVariable Long id,
             @Valid @RequestBody Course course) {
@@ -57,7 +56,7 @@ public class CourseController {
     }
 
     // Delete Course
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/course/{id}")
     public ResponseEntity<String> deleteCourse(
             @PathVariable Long id) {
 
@@ -67,14 +66,14 @@ public class CourseController {
     }
 
     // Update Duration
-    @PutMapping("/{courseId}/duration")
-    public ResponseEntity<Course> updateDuration(
-            @PathVariable Long courseId,
-            @RequestParam Long durationInSeconds) {
-
-        return ResponseEntity.ok(
-                courseService.updateDuration(courseId, durationInSeconds)
-        );
-    }
+//    @PutMapping("/{courseId}/duration")
+//    public ResponseEntity<Course> updateDuration(
+//            @PathVariable Long courseId,
+//            @RequestParam Long durationInSeconds) {
+//
+//        return ResponseEntity.ok(
+//                courseService.updateDuration(courseId, durationInSeconds)
+//        );
+//    }
 
 }

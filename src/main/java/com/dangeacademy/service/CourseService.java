@@ -17,5 +17,5 @@ public interface CourseService {
 
     void deleteCourse(Long id);
 
-    Course updateDuration(Long courseId, Long durationInSeconds);
+    /*Course updateDuration(Long courseId, Long durationInSeconds);*/
 }

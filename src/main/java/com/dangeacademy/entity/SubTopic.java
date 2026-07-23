@@ -1,5 +1,7 @@
 package com.dangeacademy.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -28,9 +30,10 @@ public class SubTopic {
 
     private String videoUid;
 
-    private Long durationInSeconds;
+    private double durationInSeconds;
 
     @ManyToOne
     @JoinColumn(name = "chapter_id")
+    @JsonBackReference
     private Chapter chapter;
 }

@@ -1,5 +1,7 @@
 package com.dangeacademy.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -28,14 +30,14 @@ public class Chapter {
 
     private Integer chapterOrder;
 
-    private Long durationInSeconds;
-
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonBackReference
     private Course course;
 
     @OneToMany(mappedBy = "chapter",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @JsonManagedReference
     private List<SubTopic> subTopics = new ArrayList<>();
 }

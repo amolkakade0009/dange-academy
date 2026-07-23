@@ -32,12 +32,14 @@ public class SubTopicServiceImpl implements SubTopicService {
                     "Video is still processing. Please try again later."
             );
         }
+
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Chapter not found with id : " + chapterId));
 
         subTopic.setChapter(chapter);
+        subTopic.setDurationInSeconds(response.getDuration());
 
         return subTopicRepository.save(subTopic);
     }
@@ -69,7 +71,9 @@ public class SubTopicServiceImpl implements SubTopicService {
         subTopic.setContent(updatedSubTopic.getContent());
         subTopic.setTopicOrder(updatedSubTopic.getTopicOrder());
         subTopic.setVideoUid(updatedSubTopic.getVideoUid());
+/*
         subTopic.setDurationInSeconds(updatedSubTopic.getDurationInSeconds());
+*/
 
         return subTopicRepository.save(subTopic);
     }

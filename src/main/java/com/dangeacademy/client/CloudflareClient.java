@@ -169,6 +169,7 @@ public class CloudflareClient {
             );
 
         } catch (Exception e) {
+            System.out.println("Error : "+e);
 
             throw new CloudflareException(
                     "Failed to fetch video details.",

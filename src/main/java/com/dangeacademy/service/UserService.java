@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface UserService {
 
-    UserResponseDto createUser(UserRequestDto dto);
 
     List<UserResponseDto> getAllUsers();
 
@@ -18,5 +17,5 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    User register(User user);
+
 }
