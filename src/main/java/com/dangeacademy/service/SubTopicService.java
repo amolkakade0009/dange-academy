@@ -7,8 +7,7 @@ import java.util.List;
 
 public interface SubTopicService {
 
-    SubTopic createSubTopic(Long chapterId, SubTopic subTopic, MultipartFile videoFile);
-
+    SubTopic createSubTopic(Long chapterId, SubTopic subTopic);
     SubTopic getSubTopicById(Long subTopicId);
 
     List<SubTopic> getSubTopicsByChapter(Long chapterId);
@@ -17,5 +16,4 @@ public interface SubTopicService {
 
     void deleteSubTopic(Long subTopicId);
 
-    String getVideoUrl(Long subTopicId);
 }

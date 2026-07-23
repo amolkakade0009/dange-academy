@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CourseService {
 
-    Course createCourse(Course course, MultipartFile videoFile, MultipartFile thumnailFile);
+    Course createCourse(Course course);
 
     List<Course> getAllCourses();
 
@@ -16,8 +16,6 @@ public interface CourseService {
     Course updateCourse(Long id, Course course);
 
     void deleteCourse(Long id);
-
-    Course updateThumbnail(Long courseId, MultipartFile thumbnail);
 
     Course updateDuration(Long courseId, Long durationInSeconds);
 }

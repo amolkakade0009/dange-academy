@@ -6,6 +6,7 @@ import com.dangeacademy.entity.User;
 import com.dangeacademy.repository.UserRepository;
 import com.dangeacademy.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,17 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+
+    public User register(User user) {
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        return userRepository.save(user);
+    }
+
+
 
     @Override
     public UserResponseDto createUser(UserRequestDto dto) {

@@ -40,10 +40,7 @@ public class Course {
     @NotBlank(message = "Video URL is required")
 */
     @Column
-    private String introVideoUrl;
-
-    @Column
-    private String thumbnailUrl;
+    private String introVideoUid;
 
     @Column
     private Long durationInSeconds;

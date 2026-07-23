@@ -1,16 +1,15 @@
 package com.dangeacademy.service.impl;
 
-import com.dangeacademy.dto.VideoUploadResponse;
+import com.dangeacademy.client.CloudflareClient;
+import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
 import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.entity.SubTopic;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.ChapterRepository;
 import com.dangeacademy.repository.SubTopicRepository;
 import com.dangeacademy.service.SubTopicService;
-import com.dangeacademy.service.AWSS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,29 +19,23 @@ public class SubTopicServiceImpl implements SubTopicService {
 
     private final SubTopicRepository subTopicRepository;
     private final ChapterRepository chapterRepository;
-    private final AWSS3Service s3Service;
-
+    private final CloudflareClient cloudflareClient;
 
     @Override
     public SubTopic createSubTopic(
             Long chapterId,
-            SubTopic subTopic,
-            MultipartFile videoFile) {
+            SubTopic subTopic) {
 
+        CloudflareVideoStatusResponse response = cloudflareClient.getVideoDetails(subTopic.getVideoUid());
+        if (!response.isReady()){
+            throw new IllegalStateException(
+                    "Video is still processing. Please try again later."
+            );
+        }
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Chapter not found with id : "
-                                        + chapterId));
-
-        VideoUploadResponse response =
-                s3Service.VideoUploadToAWSS3(videoFile);
-
-        subTopic.setVideoUrl(response.getVideoKey());
-
-//        subTopic.setDurationInSeconds(
-//                response.getDurationInSeconds()
-//        );
+                                "Chapter not found with id : " + chapterId));
 
         subTopic.setChapter(chapter);
 
@@ -52,31 +45,17 @@ public class SubTopicServiceImpl implements SubTopicService {
     @Override
     public SubTopic getSubTopicById(Long subTopicId) {
 
-        SubTopic subTopic = subTopicRepository.findById(subTopicId)
-                                .orElseThrow(() ->
-                                        new ResourceNotFoundException(
-                                                "SubTopic not found with id : "
-                                                        + subTopicId));
-
-
-        subTopic.setVideoUrl(s3Service.preSignedUrl(subTopic.getVideoUrl()));
-
-        return  subTopic;
+        return subTopicRepository.findById(subTopicId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "SubTopic not found with id : " + subTopicId));
     }
 
     @Override
     public List<SubTopic> getSubTopicsByChapter(Long chapterId) {
 
-        List<SubTopic> subTopic =  subTopicRepository
-                            .findByChapterIdOrderByTopicOrderAsc(chapterId);
-
-        return  subTopic.stream()
-                .map(subTopic1 -> {
-                    subTopic1.setVideoUrl(
-                            s3Service.preSignedUrl(subTopic1.getVideoUrl())
-                    );
-                    return subTopic1;
-                }).toList();
+        return subTopicRepository
+                .findByChapterIdOrderByTopicOrderAsc(chapterId);
     }
 
     @Override
@@ -89,6 +68,8 @@ public class SubTopicServiceImpl implements SubTopicService {
         subTopic.setTopicName(updatedSubTopic.getTopicName());
         subTopic.setContent(updatedSubTopic.getContent());
         subTopic.setTopicOrder(updatedSubTopic.getTopicOrder());
+        subTopic.setVideoUid(updatedSubTopic.getVideoUid());
+        subTopic.setDurationInSeconds(updatedSubTopic.getDurationInSeconds());
 
         return subTopicRepository.save(subTopic);
     }
@@ -98,15 +79,13 @@ public class SubTopicServiceImpl implements SubTopicService {
 
         SubTopic subTopic = getSubTopicById(subTopicId);
 
+        if (subTopic.getVideoUid() != null
+                && !subTopic.getVideoUid().isBlank()) {
+
+            cloudflareClient.deleteVideo(subTopic.getVideoUid());
+        }
+
         subTopicRepository.delete(subTopic);
     }
 
-    @Override
-    public String getVideoUrl(Long subTopicId) {
-
-        SubTopic subTopic = getSubTopicById(subTopicId);
-        subTopic.setVideoUrl(s3Service.preSignedUrl(subTopic.getVideoUrl()));
-
-        return s3Service.preSignedUrl(subTopic.getVideoUrl());
-    }
 }

@@ -2,6 +2,7 @@ package com.dangeacademy.controller;
 
 import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.service.ChapterService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +17,19 @@ public class ChapterController {
 
     private final ChapterService chapterService;
 
+    // Create Chapter
     @PostMapping("/course/{courseId}")
     public ResponseEntity<Chapter> createChapter(
             @PathVariable Long courseId,
-            @RequestBody Chapter chapter) {
+            @Valid @RequestBody Chapter chapter) {
 
-        return new ResponseEntity<>(
-                chapterService.createChapter(courseId, chapter),
-                HttpStatus.CREATED
-        );
+        Chapter savedChapter = chapterService.createChapter(courseId, chapter);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(savedChapter);
     }
 
+    // Get Chapter By Id
     @GetMapping("/{chapterId}")
     public ResponseEntity<Chapter> getChapterById(
             @PathVariable Long chapterId) {
@@ -36,6 +39,7 @@ public class ChapterController {
         );
     }
 
+    // Get All Chapters
     @GetMapping
     public ResponseEntity<List<Chapter>> getAllChapters() {
 
@@ -44,6 +48,7 @@ public class ChapterController {
         );
     }
 
+    // Get Chapters By Course
     @GetMapping("/course/{courseId}")
     public ResponseEntity<List<Chapter>> getChaptersByCourse(
             @PathVariable Long courseId) {
@@ -53,16 +58,18 @@ public class ChapterController {
         );
     }
 
+    // Update Chapter
     @PutMapping("/{chapterId}")
     public ResponseEntity<Chapter> updateChapter(
             @PathVariable Long chapterId,
-            @RequestBody Chapter chapter) {
+            @Valid @RequestBody Chapter chapter) {
 
         return ResponseEntity.ok(
                 chapterService.updateChapter(chapterId, chapter)
         );
     }
 
+    // Delete Chapter
     @DeleteMapping("/{chapterId}")
     public ResponseEntity<String> deleteChapter(
             @PathVariable Long chapterId) {

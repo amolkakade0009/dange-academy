@@ -2,6 +2,7 @@ package com.dangeacademy.service;
 
 import com.dangeacademy.dto.UserRequestDto;
 import com.dangeacademy.dto.UserResponseDto;
+import com.dangeacademy.entity.User;
 
 import java.util.List;
 
@@ -17,4 +18,5 @@ public interface UserService {
 
     void deleteUser(Long id);
 
+    User register(User user);
 }

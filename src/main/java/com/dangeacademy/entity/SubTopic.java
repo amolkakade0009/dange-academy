@@ -26,7 +26,7 @@ public class SubTopic {
 
     private Integer topicOrder;
 
-    private String videoUrl;
+    private String videoUid;
 
     private Long durationInSeconds;
 
