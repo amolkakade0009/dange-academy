@@ -4,6 +4,7 @@ import com.dangeacademy.client.CloudflareClient;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
 import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.entity.Course;
+import com.dangeacademy.entity.VideoStatus;
 import com.dangeacademy.exception.CourseNotFoundException;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.ChapterRepository;
@@ -25,14 +26,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course createCourse(Course course) {
 
-        CloudflareVideoStatusResponse response =
-                cloudflareClient.getVideoDetails(course.getIntroVideoUid());
+        course.setIntroVideoStatus(VideoStatus.PROCESSING);
 
-        if (!response.isReady()) {
-            throw new IllegalStateException(
-                    "Video is still processing. Please try again later."
-            );
-        }
 
         return courseRepository.save(course);
     }

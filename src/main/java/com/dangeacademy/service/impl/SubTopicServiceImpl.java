@@ -4,6 +4,7 @@ import com.dangeacademy.client.CloudflareClient;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
 import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.entity.SubTopic;
+import com.dangeacademy.entity.VideoStatus;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.ChapterRepository;
 import com.dangeacademy.repository.SubTopicRepository;
@@ -27,11 +28,6 @@ public class SubTopicServiceImpl implements SubTopicService {
             SubTopic subTopic) {
 
         CloudflareVideoStatusResponse response = cloudflareClient.getVideoDetails(subTopic.getVideoUid());
-        if (!response.isReady()){
-            throw new IllegalStateException(
-                    "Video is still processing. Please try again later."
-            );
-        }
 
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() ->
@@ -39,6 +35,7 @@ public class SubTopicServiceImpl implements SubTopicService {
                                 "Chapter not found with id : " + chapterId));
 
         subTopic.setChapter(chapter);
+        subTopic.setVideoStatus(VideoStatus.PROCESSING);
         subTopic.setDurationInSeconds(response.getDuration());
 
         return subTopicRepository.save(subTopic);

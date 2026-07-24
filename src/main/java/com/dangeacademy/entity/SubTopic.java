@@ -30,6 +30,10 @@ public class SubTopic {
 
     private String videoUid;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VideoStatus videoStatus = VideoStatus.PROCESSING;
+
     private double durationInSeconds;
 
     @ManyToOne
