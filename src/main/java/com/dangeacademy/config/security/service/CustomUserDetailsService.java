@@ -5,10 +5,12 @@ import com.dangeacademy.entity.User;
 import com.dangeacademy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Component
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

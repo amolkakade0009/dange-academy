@@ -90,7 +90,7 @@ public class OrderService {
 
             if(isValid){
                 Course course = courseService.getCourseById(courseId);
-                UserResponseDto user = userService.getUserById(studentId);
+                User user = userService.getUserById(studentId);
 
                 Enrollment enrollment = new Enrollment();
                 enrollment.setCourse(course);
