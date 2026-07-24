@@ -45,7 +45,7 @@ public class Course {
     private String introVideoUid;
 
     @Column
-    private int courseValidity; // in months
+    private Long courseValidity; // in months
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
