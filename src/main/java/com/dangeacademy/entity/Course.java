@@ -29,7 +29,7 @@ public class Course {
     private String courseName;
 
     @NotBlank(message = "Description is required")
-    @Size(min = 10, max = 1000)
+    @Size(max = 1000)
     @Column(nullable = false)
     private String description;
 
@@ -43,6 +43,10 @@ public class Course {
 */
     @Column
     private String introVideoUid;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VideoStatus introVideoStatus = VideoStatus.PROCESSING;
 
     @Column
     private Long courseValidity; // in months

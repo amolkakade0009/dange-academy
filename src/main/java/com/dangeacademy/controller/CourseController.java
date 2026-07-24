@@ -27,11 +27,31 @@ public class CourseController {
                 .body(savedCourse);
     }
 
+    @GetMapping("/public/courses")
+    public ResponseEntity<List<Course>> getAllCoursesForAdmin() {
+
+        List<Course> course = courseService.getAllCourses();
+        if (course.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else {
+            return ResponseEntity.ok(course);
+
+        }
+
+    }
+
     // Get All Courses
     @GetMapping("/student/courses")
     public ResponseEntity<List<Course>> getAllCourses() {
 
-        return ResponseEntity.ok(courseService.getAllCourses());
+         List<Course> course = courseService.getAllCourses();
+         if (course.isEmpty()){
+             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+         }else {
+             return ResponseEntity.ok(course);
+
+         }
+
     }
 
     // Get Course By Id

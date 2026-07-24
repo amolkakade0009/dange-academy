@@ -1,6 +1,7 @@
 package com.dangeacademy.dto;
 
 import com.dangeacademy.entity.Role;
+import jakarta.persistence.Entity;
 import lombok.Builder;
 import lombok.Data;
 
