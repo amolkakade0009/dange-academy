@@ -12,13 +12,7 @@ public class EnrollmentResponseDto {
 
     private Long id;
 
-    private UserResponseDto student;
-
-    private Course course;
-
-    private String razorpayOrderId;
-
-    private String razorpayPaymentId;
+    private CourseResponseDto course;
 
     private LocalDateTime enrolledAt;
 

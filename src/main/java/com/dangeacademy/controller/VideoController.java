@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/videos")
 @RequiredArgsConstructor
 public class VideoController {
 
@@ -21,7 +20,7 @@ public class VideoController {
     /**
      * Create Direct Upload URL
      */
-    @PostMapping("/upload-url")
+    @PostMapping("/admin/videos/upload-url")
     public ResponseEntity<CloudflareUploadResponse> createUpload() {
 
         CloudflareUploadResponse response = videoService.createUpload();
@@ -33,7 +32,7 @@ public class VideoController {
     /**
      * Generate Playback Token
      */
-    @GetMapping("/{videoUid}/playback-url")
+    @GetMapping("student/course/{videoUid}/playback-url")
     public ResponseEntity<PlaybackUrlResponse> getPlaybackUrl(
             @PathVariable String videoUid) {
 

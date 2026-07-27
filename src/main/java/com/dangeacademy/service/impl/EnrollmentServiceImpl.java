@@ -1,7 +1,9 @@
 package com.dangeacademy.service.impl;
 
+import com.dangeacademy.dto.CourseResponseDto;
 import com.dangeacademy.dto.EnrollmentResponseDto;
 import com.dangeacademy.dto.UserResponseDto;
+import com.dangeacademy.entity.Course;
 import com.dangeacademy.entity.Enrollment;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.EnrollmentRepository;
@@ -98,20 +100,22 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private EnrollmentResponseDto mapToResponse(Enrollment enrollment) {
 
-        UserResponseDto studentDto = UserResponseDto.builder()
-                .id(enrollment.getStudent().getId())
-                .name(enrollment.getStudent().getName())
-                .email(enrollment.getStudent().getEmail())
-                .mobileNumber(enrollment.getStudent().getMobileNumber())
-                .role(enrollment.getStudent().getRole())
+        Course course = enrollment.getCourse();
+
+        CourseResponseDto courseDto = CourseResponseDto.builder()
+                .id(course.getId())
+                .courseName(course.getCourseName())
+                .description(course.getDescription())
+                .price(course.getPrice())
+                .courseValidity(course.getCourseValidity())
+                .status(course.getStatus())
+                .uploadedDate(course.getUploadedDate())
+                .enrolledCount(course.getEnrolledCount())
                 .build();
 
         return EnrollmentResponseDto.builder()
                 .id(enrollment.getId())
-                .student(studentDto)
-                .course(enrollment.getCourse())
-                .razorpayOrderId(enrollment.getRazorpayOrderId())
-                .razorpayPaymentId(enrollment.getRazorpayPaymentId())
+                .course(courseDto)
                 .enrolledAt(enrollment.getEnrolledAt())
                 .expireOn(enrollment.getExpireOn())
                 .build();

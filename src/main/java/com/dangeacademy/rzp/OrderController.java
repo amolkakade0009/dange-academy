@@ -28,11 +28,12 @@ public class OrderController {
     public record CreateOrderReq(double price, String courseName) {}
     public record VerifyReq(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature ,Long stundetid, Long courseId , LocalDateTime enrolledAt) {}
 
-    @GetMapping("/create-order/{courseId}/{StudentId}")
+    @GetMapping("/create-order/{courseId}/{studentId}")
     public ResponseEntity<?> createOrder(@PathVariable Long courseId, @PathVariable Long studentId) {
 
         try {
-
+            System.out.println(courseId);
+            System.out.println(studentId);
             Map<String, Object> orderData = orderService.createOrder(courseId,studentId);
             return ResponseEntity.ok(orderData);
         } catch (RazorpayException e) {
