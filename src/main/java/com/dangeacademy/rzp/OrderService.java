@@ -3,8 +3,11 @@ package com.dangeacademy.rzp;
 
 import com.dangeacademy.entity.Course;
 import com.dangeacademy.entity.Enrollment;
+import com.dangeacademy.entity.OrderStatus;
 import com.dangeacademy.entity.User;
+import com.dangeacademy.exception.UserNotFoundException;
 import com.dangeacademy.repository.CourseRepository;
+import com.dangeacademy.repository.OrderRepository;
 import com.dangeacademy.repository.UserRepository;
 import com.dangeacademy.service.CourseService;
 import com.dangeacademy.service.EnrollmentService;
@@ -39,6 +42,7 @@ public class OrderService {
    private final EnrollmentService enrollmentService;
    private final UserService userService;
    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
    @Autowired
    RazorpayClient razorpayClient;
     /**
@@ -54,8 +58,13 @@ public class OrderService {
 */
 
 
-        Course course = courseService.getCourseById(courseId);
 
+        Course course = courseService.getCourseById(courseId);
+        User user = userRepository.findById(studentId).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+
+        }
 
         long amountInPaise = Math.round(course.getPrice() * 100);
 
@@ -76,6 +85,15 @@ public class OrderService {
         response.put("keyId", keyId);
         response.put("courseName", course.getCourseName());
 
+        com.dangeacademy.entity.Order order = new com.dangeacademy.entity.Order();
+        order.setRazorpayOrderId(razorpayOrderId);
+        order.setStatus(OrderStatus.CREATED);
+        order.setAmount(course.getPrice());
+        order.setCurrency("INR");
+        order.setCreatedAt(LocalDateTime.now());
+        order.setCourse(course);
+        order.setUser(user);
+
         return response;
     }
 
@@ -93,6 +111,7 @@ public class OrderService {
 
             // Verifies the HMAC-SHA256 signature
             boolean isValid = Utils.verifyPaymentSignature(options, keySecret);
+            com.dangeacademy.entity.Order wanttosaveorder =  orderRepository.findByRazorpayOrderId(orderId).orElse(null);
 
             if(isValid){
                 Course course = courseService.getCourseById(courseId);
@@ -111,8 +130,20 @@ public class OrderService {
 
                 enrollmentService.enrollStudent(enrollment);
                 courseRepository.save(course);
-            }
+                wanttosaveorder.setRazorpayPaymentId(paymentId);
+                wanttosaveorder.setRazorpaySignature(signature);
+                wanttosaveorder.setStatus(OrderStatus.PAID);
+                wanttosaveorder.setPaidAt(enrolledAt);
 
+                orderRepository.save(wanttosaveorder);
+            }else {
+                wanttosaveorder.setRazorpayPaymentId(paymentId);
+                wanttosaveorder.setRazorpaySignature(signature);
+                wanttosaveorder.setStatus(OrderStatus.FAILED);
+                wanttosaveorder.setPaidAt(enrolledAt);
+
+                orderRepository.save(wanttosaveorder);
+            }
 
             return isValid;
         } catch (Exception e) {
