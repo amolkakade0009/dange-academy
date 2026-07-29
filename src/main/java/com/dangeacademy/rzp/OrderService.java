@@ -42,22 +42,22 @@ public class OrderService {
     @Value("${razorpay.key.secret}")
     private String keySecret;
 
-   private final CourseService courseService;
-   private final CourseRepository courseRepository;
-   private final EnrollmentService enrollmentService;
-   private final UserService userService;
-   private final UserRepository userRepository;
-   private final OrderRepository orderRepository;
+    private final CourseService courseService;
+    private final CourseRepository courseRepository;
+    private final EnrollmentService enrollmentService;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
-   @Autowired
-   RazorpayClient razorpayClient;
+    @Autowired
+    RazorpayClient razorpayClient;
     /**
      * Creates a static Razorpay Order without any DB interactions
      */
     public Map<String, Object> createOrder(Long courseId, Long studentId) throws RazorpayException {
 
         if(enrollmentService.isStudentEnrolled(studentId,courseId)){
-           throw new RuntimeException("You have all ready enrolled");
+            throw new RuntimeException("You have all ready enrolled");
         }
 
 /*
