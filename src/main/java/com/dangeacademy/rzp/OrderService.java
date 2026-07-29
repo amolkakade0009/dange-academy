@@ -3,16 +3,24 @@ package com.dangeacademy.rzp;
 
 import com.dangeacademy.entity.Course;
 import com.dangeacademy.entity.Enrollment;
+import com.dangeacademy.entity.OrderStatus;
 import com.dangeacademy.entity.User;
+import com.dangeacademy.exception.UserNotFoundException;
 import com.dangeacademy.repository.CourseRepository;
+import com.dangeacademy.repository.OrderRepository;
 import com.dangeacademy.repository.UserRepository;
 import com.dangeacademy.service.CourseService;
 import com.dangeacademy.service.EnrollmentService;
 import com.dangeacademy.service.UserService;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.razorpay.Utils;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +47,15 @@ public class OrderService {
    private final EnrollmentService enrollmentService;
    private final UserService userService;
    private final UserRepository userRepository;
+   private final OrderRepository orderRepository;
+
    @Autowired
    RazorpayClient razorpayClient;
     /**
      * Creates a static Razorpay Order without any DB interactions
      */
     public Map<String, Object> createOrder(Long courseId, Long studentId) throws RazorpayException {
+
         if(enrollmentService.isStudentEnrolled(studentId,courseId)){
            throw new RuntimeException("You have all ready enrolled");
         }
@@ -55,7 +66,11 @@ public class OrderService {
 
 
         Course course = courseService.getCourseById(courseId);
+        User user = userRepository.findById(studentId).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
 
+        }
 
         long amountInPaise = Math.round(course.getPrice() * 100);
 
@@ -75,6 +90,18 @@ public class OrderService {
         response.put("currency", "INR");
         response.put("keyId", keyId);
         response.put("courseName", course.getCourseName());
+
+        com.dangeacademy.entity.Order order = new com.dangeacademy.entity.Order();
+        order.setRazorpayOrderId(razorpayOrderId);
+        order.setStatus(OrderStatus.CREATED);
+        order.setAmount(course.getPrice());
+        order.setCurrency("INR");
+        order.setCreatedAt(LocalDateTime.now());
+        order.setCourse(course);
+        order.setUser(user);
+
+        orderRepository.save(order);
+
 
         return response;
     }
@@ -104,13 +131,20 @@ public class OrderService {
                 enrollment.setRazorpayOrderId(orderId);
                 enrollment.setRazorpayPaymentId(paymentId);
                 enrollment.setEnrolledAt(enrolledAt);
-                enrollment.setExpireOn(
-                        enrolledAt.plusMonths(course.getCourseValidity())
-                );
-                course.setEnrolledCount(course.getEnrolledCount()+1);
-
+                enrollment.setExpireOn(enrolledAt.plusMonths(course.getCourseValidity()));
                 enrollmentService.enrollStudent(enrollment);
+
+                course.setEnrolledCount(course.getEnrolledCount()+1);
                 courseRepository.save(course);
+
+                com.dangeacademy.entity.Order order =  orderRepository.findByRazorpayOrderId(orderId).orElse(null);
+                order.setRazorpayPaymentId(paymentId);
+                order.setRazorpaySignature(signature);
+                order.setStatus(OrderStatus.PAID);
+                order.setPaidAt(enrolledAt);
+
+                orderRepository.save(order);
+
             }
 
 
