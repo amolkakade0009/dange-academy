@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(user); // map to response there is an method below
     }
 
+    //do not update the password and mobile number keep it same as existing
     @Override
     public UserResponseDto updateUser(Long id, UserRequestDto dto) {
 
@@ -45,9 +46,9 @@ public class UserServiceImpl implements UserService {
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setMobileNumber(dto.getMobileNumber());
-        user.setPassword(dto.getPassword());
-        user.setRole(dto.getRole());
+        user.setMobileNumber(user.getMobileNumber());
+        user.setPassword(user.getPassword());
+        user.setRole(user.getRole());
 
         User updatedUser = userRepository.save(user);
 
