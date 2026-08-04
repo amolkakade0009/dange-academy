@@ -1,5 +1,6 @@
 package com.dangeacademy.controller;
 
+import com.dangeacademy.dto.CourseRequestDto;
 import com.dangeacademy.entity.Course;
 import com.dangeacademy.service.CourseService;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ public class CourseController {
     // Create Course
     @PostMapping("/admin/course/create")
     public ResponseEntity<Course> createCourse(
-            @Valid @RequestBody Course course) {
+            @Valid @RequestBody CourseRequestDto course) {
 
         Course savedCourse = courseService.createCourse(course);
 
@@ -38,6 +39,15 @@ public class CourseController {
 
         }
 
+    }
+
+    @GetMapping("/admin/course/mentor/{mentorId}")
+    public ResponseEntity<List<Course>> getCoursesByMentor(
+            @PathVariable Long mentorId) {
+
+        return ResponseEntity.ok(
+                courseService.getCoursesByMentor(mentorId)
+        );
     }
 
     // Get All Courses
@@ -68,7 +78,7 @@ public class CourseController {
     @PutMapping("/admin/course/{id}")
     public ResponseEntity<Course> updateCourse(
             @PathVariable Long id,
-            @Valid @RequestBody Course course) {
+            @Valid @RequestBody CourseRequestDto course) {
 
         return ResponseEntity.ok(
                 courseService.updateCourse(id, course)

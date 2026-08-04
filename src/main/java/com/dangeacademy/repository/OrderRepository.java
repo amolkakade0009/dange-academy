@@ -1,7 +1,7 @@
 package com.dangeacademy.repository;
 
 import com.dangeacademy.entity.Order;
-import com.dangeacademy.entity.OrderStatus;
+import com.dangeacademy.enums.OrderStatus;
 import com.dangeacademy.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

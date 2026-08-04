@@ -1,12 +1,9 @@
 package com.dangeacademy.entity;
 
+import com.dangeacademy.enums.VideoStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "sub_topics")

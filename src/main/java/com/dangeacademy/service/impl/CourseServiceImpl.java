@@ -1,16 +1,18 @@
 package com.dangeacademy.service.impl;
 
 import com.dangeacademy.client.CloudflareClient;
-import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
+import com.dangeacademy.dto.CourseRequestDto;
 import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.entity.Course;
-import com.dangeacademy.entity.VideoStatus;
+import com.dangeacademy.entity.Mentor;
+import com.dangeacademy.enums.VideoStatus;
 import com.dangeacademy.exception.CourseNotFoundException;
-import com.dangeacademy.exception.ResourceNotFoundException;
-import com.dangeacademy.repository.ChapterRepository;
+import com.dangeacademy.exception.MentorNotFoundException;
 import com.dangeacademy.repository.CourseRepository;
+import com.dangeacademy.repository.MentorRepository;
 import com.dangeacademy.service.ChapterService;
 import com.dangeacademy.service.CourseService;
+import com.dangeacademy.service.MentorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +24,18 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final CloudflareClient cloudflareClient;
-     private final ChapterService chapterService;
+    private final ChapterService chapterService;
+    private final MentorService mentorService;
+    private final MentorRepository mentorRepository;
+
+
     @Override
-    public Course createCourse(Course course) {
+    public Course createCourse(CourseRequestDto courseRequestDto) {
 
+        Mentor mentor = mentorService.getMentorById(courseRequestDto.getMentorId());
+
+        Course course = mapToCourse(courseRequestDto,mentor);
         course.setIntroVideoStatus(VideoStatus.PROCESSING);
-
 
         return courseRepository.save(course);
     }
@@ -50,7 +58,21 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(Long id, Course course) {
+    public List<Course> getCoursesByMentor(Long mentorId) {
+
+        mentorRepository.findById(mentorId)
+                .orElseThrow(() ->
+                        new MentorNotFoundException(
+                                "Mentor not found with id : " + mentorId));
+
+        return courseRepository.findByMentorId(mentorId);
+    }
+
+
+    @Override
+    public Course updateCourse(Long id, CourseRequestDto course) {
+
+        Mentor mentor = mentorService.getMentorById(course.getMentorId());
 
         Course existingCourse = courseRepository.findById(id)
                 .orElseThrow(() ->
@@ -62,6 +84,10 @@ public class CourseServiceImpl implements CourseService {
         existingCourse.setDescription(course.getDescription());
         existingCourse.setPrice(course.getPrice());
         existingCourse.setCourseValidity(course.getCourseValidity());
+        existingCourse.setOriginalPrice(course.getOriginalPrice());
+        existingCourse.setMentor(mentor);
+        existingCourse.setCourseThumbnailUrl(course.getCourseThumbnailUrl());
+        existingCourse.setCategory(course.getCategory());
         existingCourse.setStatus(course.getStatus());
         existingCourse.setIntroVideoUid(course.getIntroVideoUid());
 
@@ -90,6 +116,24 @@ public class CourseServiceImpl implements CourseService {
 
         courseRepository.delete(course);
     }
+
+    private Course mapToCourse(CourseRequestDto dto, Mentor mentor) {
+
+        return Course.builder()
+                .courseName(dto.getCourseName())
+                .description(dto.getDescription())
+                .price(dto.getPrice())
+                .originalPrice(dto.getOriginalPrice())
+                .mentor(mentor)
+                .courseThumbnailUrl(dto.getCourseThumbnailUrl())
+                .category(dto.getCategory())
+                .introVideoUid(dto.getIntroVideoUid())
+                .introVideoStatus(VideoStatus.PROCESSING)
+                .courseValidity(dto.getCourseValidity())
+                .status(dto.getStatus())
+                .build();
+    }
+
 
     /*@Override
     public Course updateDuration(Long courseId, Long durationInSeconds) {

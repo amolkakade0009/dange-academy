@@ -2,7 +2,7 @@ package com.dangeacademy.service.impl;
 
 import com.dangeacademy.entity.Course;
 import com.dangeacademy.entity.Order;
-import com.dangeacademy.entity.OrderStatus;
+import com.dangeacademy.enums.OrderStatus;
 import com.dangeacademy.entity.User;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.CourseRepository;
@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

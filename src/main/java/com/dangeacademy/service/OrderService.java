@@ -1,7 +1,7 @@
 package com.dangeacademy.service;
 
 import com.dangeacademy.entity.Order;
-import com.dangeacademy.entity.OrderStatus;
+import com.dangeacademy.enums.OrderStatus;
 
 import java.util.List;
 

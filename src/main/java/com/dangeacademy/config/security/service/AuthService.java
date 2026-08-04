@@ -4,7 +4,7 @@ package com.dangeacademy.config.security.service;
 
 import com.dangeacademy.config.security.dto.LoginRequest;
 import com.dangeacademy.config.security.dto.SignupRequest;
-import com.dangeacademy.entity.Role;
+import com.dangeacademy.enums.Role;
 import com.dangeacademy.entity.User;
 import com.dangeacademy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

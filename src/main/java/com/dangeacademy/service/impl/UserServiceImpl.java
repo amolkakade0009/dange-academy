@@ -2,7 +2,7 @@ package com.dangeacademy.service.impl;
 
 import com.dangeacademy.dto.UserRequestDto;
 import com.dangeacademy.dto.UserResponseDto;
-import com.dangeacademy.entity.Role;
+import com.dangeacademy.enums.Role;
 import com.dangeacademy.entity.User;
 import com.dangeacademy.repository.UserRepository;
 import com.dangeacademy.service.UserService;

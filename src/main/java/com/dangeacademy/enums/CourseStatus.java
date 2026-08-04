@@ -1,4 +1,4 @@
-package com.dangeacademy.entity;
+package com.dangeacademy.enums;
 
 public enum CourseStatus {
     ACTIVE,

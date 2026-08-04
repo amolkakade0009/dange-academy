@@ -1,7 +1,7 @@
 package com.dangeacademy.repository;
 
 import com.dangeacademy.entity.SubTopic;
-import com.dangeacademy.entity.VideoStatus;
+import com.dangeacademy.enums.VideoStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

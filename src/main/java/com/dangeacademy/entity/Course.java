@@ -1,5 +1,9 @@
 package com.dangeacademy.entity;
 
+import com.dangeacademy.enums.CourseCategory;
+import com.dangeacademy.enums.CourseStatus;
+import com.dangeacademy.enums.VideoStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -36,11 +40,21 @@ public class Course {
     @NotNull(message = "price is required")
     @Positive(message = "price must be greater than 0")
     @Column(nullable = false)
-    private Double price;
+    private Double price;  //Discounted price
 
-/*
-    @NotBlank(message = "Video URL is required")
-*/
+    private Double originalPrice;
+
+    @ManyToOne
+    @JoinColumn(name = "mentor_id", nullable = false)
+    private Mentor mentor;
+
+    @Column
+    private String courseThumbnailUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CourseCategory category;
+
     @Column
     private String introVideoUid;
 

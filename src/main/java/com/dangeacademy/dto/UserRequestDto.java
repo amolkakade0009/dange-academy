@@ -1,6 +1,6 @@
 package com.dangeacademy.dto;
 
-import com.dangeacademy.entity.Role;
+import com.dangeacademy.enums.Role;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

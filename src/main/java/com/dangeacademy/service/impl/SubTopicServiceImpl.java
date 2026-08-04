@@ -4,7 +4,7 @@ import com.dangeacademy.client.CloudflareClient;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
 import com.dangeacademy.entity.Chapter;
 import com.dangeacademy.entity.SubTopic;
-import com.dangeacademy.entity.VideoStatus;
+import com.dangeacademy.enums.VideoStatus;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.ChapterRepository;
 import com.dangeacademy.repository.SubTopicRepository;

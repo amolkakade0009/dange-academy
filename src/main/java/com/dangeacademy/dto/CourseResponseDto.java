@@ -1,6 +1,8 @@
 package com.dangeacademy.dto;
 
-import com.dangeacademy.entity.CourseStatus;
+import com.dangeacademy.entity.Mentor;
+import com.dangeacademy.enums.CourseCategory;
+import com.dangeacademy.enums.CourseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,10 @@ public class CourseResponseDto {
     private String courseName;
     private String description;
     private Double price;
+    private Double originalPrice;
+    private String courseThumbnailUrl;
+    private CourseCategory category;
+    private Mentor mentor;
     private Long courseValidity;
     private CourseStatus status;
     private LocalDateTime uploadedDate;

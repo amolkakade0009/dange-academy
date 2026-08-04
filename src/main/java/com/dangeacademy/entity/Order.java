@@ -1,5 +1,6 @@
 package com.dangeacademy.entity;
 
+import com.dangeacademy.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
