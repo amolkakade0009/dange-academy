@@ -48,6 +48,22 @@ public class VideoController {
         return ResponseEntity.ok(new PlaybackUrlResponse(url));
     }
 
+    @GetMapping("public/course/{videoUid}/playback-url")
+    public ResponseEntity<PlaybackUrlResponse> getPlaybackUrlForPublic(
+            @PathVariable String videoUid) {
+
+        String token = videoService.generatePlaybackToken(videoUid);
+
+        String url = "https://"
+                + properties.getCustomerSubdomain()
+                + "/"
+                + videoUid
+                + "/iframe?token="
+                + token;
+
+        return ResponseEntity.ok(new PlaybackUrlResponse(url));
+    }
+
 
     /**
      * Get Video Details

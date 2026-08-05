@@ -31,7 +31,6 @@ public class EnrollmentController {
     @GetMapping("/enrollment/{enrollmentId}")
     public ResponseEntity<EnrollmentResponseDto> getEnrollment(
             @PathVariable Long enrollmentId) {
-
         return ResponseEntity.ok(
                 enrollmentService.getEnrollment(enrollmentId));
     }

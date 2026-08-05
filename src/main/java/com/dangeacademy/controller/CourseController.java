@@ -38,7 +38,14 @@ public class CourseController {
             return ResponseEntity.ok(course);
 
         }
+    }
+    @GetMapping("public/course/{id}")
+    public ResponseEntity<Course> getCourseByIdForPublicUser(
+            @PathVariable Long id) {
 
+        return ResponseEntity.ok(
+                courseService.getCourseById(id)
+        );
     }
 
     @GetMapping("/admin/course/mentor/{mentorId}")
