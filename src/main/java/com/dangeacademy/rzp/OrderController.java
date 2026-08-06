@@ -2,6 +2,8 @@ package com.dangeacademy.rzp;
 
 
 
+import com.dangeacademy.entity.Order;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.razorpay.RazorpayException;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 /**
  * @author Rohan Ghuge
@@ -16,13 +19,11 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("student/order")
+@RequiredArgsConstructor
 public class OrderController {
 
-    private final  OrderService orderService;
-
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+    private final  OrderService rzpOrderService;
+    private final com.dangeacademy.service.OrderService orderService;
 
     // Request DTOs
     public record CreateOrderReq(double price, String courseName) {}
@@ -34,7 +35,7 @@ public class OrderController {
         try {
             System.out.println(courseId);
             System.out.println(studentId);
-            Map<String, Object> orderData = orderService.createOrder(courseId,studentId);
+            Map<String, Object> orderData = rzpOrderService.createOrder(courseId,studentId);
             return ResponseEntity.ok(orderData);
         } catch (RazorpayException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -43,7 +44,7 @@ public class OrderController {
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyPayment(@RequestBody VerifyReq req) {
-        boolean isSuccess = orderService.verifyPayment(
+        boolean isSuccess = rzpOrderService.verifyPayment(
                 req.razorpayOrderId(),
                 req.razorpayPaymentId(),
                 req.razorpaySignature(),
@@ -57,5 +58,18 @@ public class OrderController {
         } else {
             return ResponseEntity.badRequest().body(Map.of("status", "FAILED", "message", "Invalid signature!"));
         }
+    }
+
+
+    // Get all orders of a specific user
+    @GetMapping("/{userId}")
+    public List<Order> getOrdersByUser(@PathVariable Long userId) {
+        return orderService.getOrdersByUser(userId);
+    }
+
+    // Get all orders (Admin)
+    @GetMapping
+    public List<Order> getAllOrders() {
+        return orderService.getAllOrders();
     }
 }
