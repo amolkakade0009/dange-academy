@@ -17,4 +17,5 @@ public class EnrollmentResponseDto {
     private LocalDateTime enrolledAt;
 
     private LocalDateTime expireOn;
+    private double progressPercentage;
 }

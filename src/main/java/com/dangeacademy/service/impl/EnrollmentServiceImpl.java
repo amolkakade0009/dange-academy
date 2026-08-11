@@ -109,6 +109,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .price(course.getPrice())
                 .courseValidity(course.getCourseValidity())
                 .status(course.getStatus())
+                .courseThumbnailUrl(course.getCourseThumbnailUrl())
                 .uploadedDate(course.getUploadedDate())
                 .enrolledCount(course.getEnrolledCount())
                 .build();
@@ -118,6 +119,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .course(courseDto)
                 .enrolledAt(enrollment.getEnrolledAt())
                 .expireOn(enrollment.getExpireOn())
+                .progressPercentage(enrollment.getProgressPercentage())
                 .build();
     }
 }

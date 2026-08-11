@@ -32,6 +32,9 @@ public class Enrollment {
     @NotNull(message = "razorpayPaymentId is required")
     private  String razorpayPaymentId;
 
+    @Column(nullable = false)
+    private double progressPercentage = 0.0;
+
     @Column
     private LocalDateTime enrolledAt;
 

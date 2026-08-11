@@ -53,6 +53,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Column
+    private  Boolean isLogin=false;
+
 
     //UserDetails implemented methods
 

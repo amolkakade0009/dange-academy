@@ -68,9 +68,21 @@ public class AuthService {
         login_response.put("role",user.getRole().toString());
         login_response.put("email", user.getEmail());
         login_response.put("name",user.getName());
+        login_response.put("mobileNumber",user.getMobileNumber());
+        login_response.put("isLogin",user.getIsLogin().toString());
+        user.setIsLogin(true);
+        userRepository.save(user);
 
         return login_response;
     }
 
-
+    public Map<String, String> logout(Long userId)
+    {
+        User  user=userRepository.findById(userId).orElseThrow();
+        user.setIsLogin(false);
+        userRepository.save(user);
+        Map<String,String> logout_response=new HashMap<>();
+        logout_response.put("msg","Logout Successfull");
+        return logout_response;
+    }
 }

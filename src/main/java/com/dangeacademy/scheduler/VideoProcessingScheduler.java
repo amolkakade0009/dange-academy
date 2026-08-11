@@ -76,6 +76,7 @@ public class VideoProcessingScheduler {
                 if (response.isReady()) {
 
                     subTopic.setVideoStatus(VideoStatus.READY);
+                    subTopic.setDurationInSeconds(response.getDuration());
 
                     subTopicRepository.save(subTopic);
 

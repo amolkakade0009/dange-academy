@@ -21,4 +21,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     Optional<Enrollment> findByRazorpayOrderId(String razorpayOrderId);
 
     Optional<Enrollment> findByRazorpayPaymentId(String razorpayPaymentId);
+
+    // Spring JPA automatically maps: student -> student.id AND course -> course.id
+    Optional<Enrollment> findByStudentIdAndCourseId(Long studentId, Long courseId);
 }
