@@ -24,17 +24,16 @@ public class JwtService {
     private long expiration;
 
     // Generate JWT
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String sessionId) {
 
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("sessionId", sessionId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
                 .compact();
     }
-
-
 
 
 
@@ -51,6 +50,11 @@ public class JwtService {
 
         return email.equals(userDetails.getUsername())
                 && !isTokenExpired(token);
+    }
+
+    public String extractSessionId(String token) {
+        return extractAllClaims(token)
+                .get("sessionId", String.class);
     }
 
     // ---------------- Private Methods ----------------

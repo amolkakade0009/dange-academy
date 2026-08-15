@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 @Service
@@ -61,7 +62,20 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        String token = jwtService.generateToken(user);
+        // Generate NEW session ID
+        String sessionId = UUID.randomUUID().toString();
+
+        // Replace previous session
+        user.setSessionId(sessionId);
+
+        userRepository.save(user);
+
+
+        String token = jwtService.generateToken(user, sessionId);
+        System.out.println("Session Id"+ "=" + sessionId );
+        System.out.println("Token"+ "=" + token );
+
+
         Map<String,String> login_response=new HashMap<>();
         login_response.put("token",token);
         login_response.put("user_id",user.getId().toString());
@@ -69,17 +83,26 @@ public class AuthService {
         login_response.put("email", user.getEmail());
         login_response.put("name",user.getName());
         login_response.put("mobileNumber",user.getMobileNumber());
+        login_response.put("sessionId", sessionId);
+/*
         login_response.put("isLogin",user.getIsLogin().toString());
+*/
+/*
         user.setIsLogin(true);
+*/
         userRepository.save(user);
 
         return login_response;
     }
 
+
+
+
     public Map<String, String> logout(Long userId)
     {
         User  user=userRepository.findById(userId).orElseThrow();
-        user.setIsLogin(false);
+        /*user.setIsLogin(false);*/
+        user.setSessionId("");
         userRepository.save(user);
         Map<String,String> logout_response=new HashMap<>();
         logout_response.put("msg","Logout Successfull");

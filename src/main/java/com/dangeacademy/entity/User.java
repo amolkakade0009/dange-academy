@@ -56,6 +56,9 @@ public class User implements UserDetails {
     @Column
     private  Boolean isLogin=false;
 
+    @Column(name = "session_id")
+    private String sessionId;
+
 
     //UserDetails implemented methods
 
