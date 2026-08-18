@@ -78,7 +78,8 @@ public class SubTopicServiceImpl implements SubTopicService {
     @Override
     public void deleteSubTopic(Long subTopicId) {
 
-        SubTopic subTopic = getSubTopicById(subTopicId);
+        SubTopic subTopic =
+                getSubTopicById(subTopicId);
 
         if (subTopic.getVideoUid() != null
                 && !subTopic.getVideoUid().isBlank()) {

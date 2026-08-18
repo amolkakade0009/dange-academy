@@ -113,7 +113,6 @@ public class CourseServiceImpl implements CourseService {
             cloudflareClient.deleteVideo(course.getIntroVideoUid());
 
         }
-
         courseRepository.delete(course);
     }
 
