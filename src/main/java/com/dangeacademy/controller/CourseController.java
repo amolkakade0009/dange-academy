@@ -93,7 +93,7 @@ public class CourseController {
     }
 
     // Delete Course
-    @DeleteMapping("/admin/course/{id}")
+    @DeleteMapping("/admin/course/{id}")//jhkkh
     public ResponseEntity<String> deleteCourse(
             @PathVariable Long id) {
 
