@@ -1,6 +1,7 @@
 package com.dangeacademy.repository;
 
 import com.dangeacademy.entity.Enrollment;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
-    List<Enrollment> findByStudent_Id(Long studentId);
+    List<Enrollment> findByStudent_Id(Long studentId, Sort enrolledAt);
 
     List<Enrollment> findByCourse_Id(Long courseId);
 

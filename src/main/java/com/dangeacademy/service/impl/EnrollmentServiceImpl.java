@@ -9,6 +9,7 @@ import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.EnrollmentRepository;
 import com.dangeacademy.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +53,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Transactional(readOnly = true)
     public List<EnrollmentResponseDto> getStudentEnrollments(Long studentId) {
 
-        return enrollmentRepository.findByStudent_Id(studentId)
+        return enrollmentRepository.findByStudent_Id(studentId , Sort.by(Sort.Direction.DESC,"enrolledAt"))
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

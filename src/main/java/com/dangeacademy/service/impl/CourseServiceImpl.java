@@ -14,6 +14,7 @@ import com.dangeacademy.service.ChapterService;
 import com.dangeacademy.service.CourseService;
 import com.dangeacademy.service.MentorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getAllCourses() {
 
-        return courseRepository.findAll();
+        return courseRepository.findAll(Sort.by(Sort.Direction.DESC  , "uploadedDate"));
 
     }
 
