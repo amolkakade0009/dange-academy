@@ -8,6 +8,7 @@ import com.dangeacademy.enums.VideoStatus;
 import com.dangeacademy.exception.ResourceNotFoundException;
 import com.dangeacademy.repository.ChapterRepository;
 import com.dangeacademy.repository.SubTopicRepository;
+import com.dangeacademy.repository.VideoProgressRepository;
 import com.dangeacademy.service.SubTopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class SubTopicServiceImpl implements SubTopicService {
     private final SubTopicRepository subTopicRepository;
     private final ChapterRepository chapterRepository;
     private final CloudflareClient cloudflareClient;
+    private final VideoProgressRepository videoProgressRepository;
 
     @Override
     public SubTopic createSubTopic(
@@ -80,6 +82,9 @@ public class SubTopicServiceImpl implements SubTopicService {
 
         SubTopic subTopic =
                 getSubTopicById(subTopicId);
+
+        // delete a video progress on the bases of subtopic before deleting a subtopic because that the primary key of of subtopic is stored in a videoprogess as a foregin key
+        videoProgressRepository.deleteAllBySubTopic(subTopic);
 
         if (subTopic.getVideoUid() != null
                 && !subTopic.getVideoUid().isBlank()) {

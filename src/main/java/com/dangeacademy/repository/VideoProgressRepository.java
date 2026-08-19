@@ -1,5 +1,6 @@
 package com.dangeacademy.repository;
 
+import com.dangeacademy.entity.SubTopic;
 import com.dangeacademy.entity.VideoProgress;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,8 @@ public interface VideoProgressRepository extends JpaRepository<VideoProgress, Lo
             "AND vp.subTopic.chapter.course.id = :courseId " +
             "AND vp.isCompleted = true")
     List<Long> findCompletedSubTopicIds(@Param("userId") Long userId, @Param("courseId") Long courseId);
+
+    void deleteAllBySubTopic(SubTopic subTopic);
+
+
 }
