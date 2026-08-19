@@ -10,6 +10,7 @@ import com.dangeacademy.repository.ChapterRepository;
 import com.dangeacademy.repository.SubTopicRepository;
 import com.dangeacademy.repository.VideoProgressRepository;
 import com.dangeacademy.service.SubTopicService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +79,7 @@ public class SubTopicServiceImpl implements SubTopicService {
     }
 
     @Override
+    @Transactional
     public void deleteSubTopic(Long subTopicId) {
 
         SubTopic subTopic =
