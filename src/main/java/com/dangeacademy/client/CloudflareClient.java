@@ -38,15 +38,26 @@ public class CloudflareClient {
      */
     public CloudflareUploadResponse createTusUpload(long fileSize, String fileName, String contentType) {
         try {
-            // 1. Prepare TUS Metadata (Required by Cloudflare for TUS)
-            // Values must be Base64 encoded and comma-separated
-            String metadata = String.format("filename %s,filetype %s",
-                    toBase64(fileName),
-                    toBase64(contentType));
+            // 1. Prepare TUS Metadata
+            // Cloudflare expects 'name' (or 'filename') and 'allowedorigins'
+            // allowedorigins format: "example.com" or "*.pages.dev" or "*"
+            StringBuilder metadataBuilder = new StringBuilder();
+
+            if (fileName != null && !fileName.isBlank()) {
+                metadataBuilder.append("name ").append(toBase64(fileName));
+            }
+
+            // Add allowedorigins (Set to your Cloudflare Pages domain or wildcard for testing)
+            String allowedOrigins = "dangesacademy.online"; // e.g., "dangeacademy.pages.dev,localhost:5173"
+            if (metadataBuilder.length() > 0) {
+                metadataBuilder.append(",");
+            }
+            metadataBuilder.append("allowedorigins ").append(toBase64(allowedOrigins));
+
+            String metadata = metadataBuilder.toString();
 
             return cloudflareWebClient
                     .post()
-                    // URL: /accounts/{account_id}/stream?direct_user=true
                     .uri(uriBuilder -> uriBuilder
                             .path("/accounts/{accountId}/stream")
                             .queryParam("direct_user", "true")
@@ -55,7 +66,6 @@ public class CloudflareClient {
                     .header("Upload-Length", String.valueOf(fileSize))
                     .header("Upload-Metadata", metadata)
                     .contentType(MediaType.APPLICATION_JSON)
-                    // We use exchangeToMono because the data we need is in the HEADERS, not the body
                     .exchangeToMono(response -> {
                         if (response.statusCode().is2xxSuccessful()) {
                             HttpHeaders headers = response.headers().asHttpHeaders();

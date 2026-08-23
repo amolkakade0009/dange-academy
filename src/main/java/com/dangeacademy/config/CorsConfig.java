@@ -18,7 +18,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         // React Frontend URL
-        config.addAllowedOrigin("https://dangesacademy.online/");
+        config.addAllowedOrigin("https://dangesacademy.online");
 
         // Allow all headers
         config.addAllowedHeader("*");

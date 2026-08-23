@@ -91,6 +91,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "https://dangesacademy.online"
+//                "http://localhost:8081/"
 
         ));
 
