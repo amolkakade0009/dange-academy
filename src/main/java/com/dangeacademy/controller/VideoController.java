@@ -4,6 +4,7 @@ import com.dangeacademy.config.cloudflare.CloudflareProperties;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareUploadResponse;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
 import com.dangeacademy.config.cloudflare.cloudflaredto.api.PlaybackUrlResponse;
+import com.dangeacademy.dto.VideoUploadReq;
 import com.dangeacademy.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,9 @@ public class VideoController {
      * Create Direct Upload URL
      */
     @PostMapping("/admin/videos/upload-url")
-    public ResponseEntity<CloudflareUploadResponse> createUpload() {
+    public ResponseEntity<CloudflareUploadResponse> createUpload(@RequestBody VideoUploadReq req) {
 
-        CloudflareUploadResponse response = videoService.createUpload();
+        CloudflareUploadResponse response = videoService.createUpload(req);
 
         return ResponseEntity.ok(response);
     }
