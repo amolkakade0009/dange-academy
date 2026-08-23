@@ -90,7 +90,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:8081"
+                "https://dangesacademy.online"
         ));
 
         configuration.setAllowedMethods(List.of(
