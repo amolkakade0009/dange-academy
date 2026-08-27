@@ -94,8 +94,10 @@ public class SubTopicServiceImpl implements SubTopicService {
             try{
                 cloudflareClient.deleteVideo(subTopic.getVideoUid());
             } catch (Exception e) {
-                throw new RuntimeException("Subtopic is deleted forcefully.");
-            }finally {
+                System.out.println(
+                        "Cloudflare video already deleted. UID: ");
+            }
+            finally {
                 subTopicRepository.delete(subTopic);
             }
         }
