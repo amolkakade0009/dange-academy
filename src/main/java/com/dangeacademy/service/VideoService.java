@@ -39,8 +39,12 @@ public class VideoService {
 
 
     public void deleteVideo(String videoUid) {
+        try{
+            cloudflareClient.deleteVideo(videoUid);
 
-        cloudflareClient.deleteVideo(videoUid);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

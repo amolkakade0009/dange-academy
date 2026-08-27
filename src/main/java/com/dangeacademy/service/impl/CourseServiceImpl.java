@@ -110,8 +110,12 @@ public class CourseServiceImpl implements CourseService {
 
         if (course.getIntroVideoUid() != null
                 && !course.getIntroVideoUid().isBlank()) {
+            try{
+                cloudflareClient.deleteVideo(course.getIntroVideoUid());
 
-            cloudflareClient.deleteVideo(course.getIntroVideoUid());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
         }
         courseRepository.delete(course);
