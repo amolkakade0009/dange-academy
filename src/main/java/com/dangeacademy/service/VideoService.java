@@ -3,6 +3,7 @@ package com.dangeacademy.service;
 import com.dangeacademy.client.CloudflareClient;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareUploadResponse;
 import com.dangeacademy.config.cloudflare.cloudflaredto.CloudflareVideoStatusResponse;
+import com.dangeacademy.dto.VideoUploadReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,15 @@ public class VideoService {
     private final CloudflareClient cloudflareClient;
 
 
-    public CloudflareUploadResponse createUpload() {
+    public CloudflareUploadResponse createUpload(VideoUploadReq req) {
 
-        return cloudflareClient.createUpload();
+        return cloudflareClient.createTusUpload(
+                req.getFileSize(),
+                req.getFileName(),
+                req.getContentType()
+        );
 
     }
-
 
     public String generatePlaybackToken(String videoUid) {
 
