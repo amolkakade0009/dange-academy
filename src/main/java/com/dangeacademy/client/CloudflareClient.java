@@ -142,9 +142,7 @@ public class CloudflareClient {
 
 
 
-    public void deleteVideo(String videoUid) {
-
-        try {
+    public void deleteVideo(String videoUid) throws Exception  {
 
             cloudflareWebClient
                     .delete()
@@ -153,20 +151,6 @@ public class CloudflareClient {
                     .toBodilessEntity()
                     .block();
 
-        } catch (WebClientResponseException e) {
-
-            throw new CloudflareException(
-                    "Cloudflare API Error: " + e.getResponseBodyAsString(),
-                    e
-            );
-
-        } catch (Exception e) {
-
-            throw new CloudflareException(
-                    "Failed to delete video.",
-                    e
-            );
-        }
     }
 
 
