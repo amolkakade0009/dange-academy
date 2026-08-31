@@ -59,6 +59,7 @@ public class AuthService {
 
     public Map<String, String> login(LoginRequest request) {
 
+        // 1. Authenticate Email and Password first
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -69,6 +70,25 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
+        boolean isAdmin = String.valueOf(user.getRole()).equals("ADMIN");
+        boolean otpMissing = request.getOtp() == null || request.getOtp().isBlank();
+
+        // 2. ADMIN FLOW: If Admin and no OTP provided, send OTP and stop.
+        if (isAdmin && otpMissing) {
+            return sendLoginOtpForAdmin(user);
+        }
+
+        // 3. ADMIN FLOW: If Admin and OTP *is* provided, verify it!
+        if (isAdmin && !otpMissing) {
+            Boolean isOtpValid = verifyOtpOFAdmin(user.getEmail(), request.getOtp());
+
+            // SECURITY FIX: Actually check the result! Stop them if the OTP is wrong.
+            if (!isOtpValid) {
+                throw new RuntimeException("Invalid or expired OTP");
+                // Or throw a custom exception like BadCredentialsException
+            }
+        }
+
         // Generate NEW session ID
         String sessionId = UUID.randomUUID().toString();
 
@@ -76,7 +96,6 @@ public class AuthService {
         user.setSessionId(sessionId);
 
         userRepository.save(user);
-
 
         String token = jwtService.generateToken(user, sessionId);
         System.out.println("Session Id"+ "=" + sessionId );
@@ -91,17 +110,43 @@ public class AuthService {
         login_response.put("name",user.getName());
         login_response.put("mobileNumber",user.getMobileNumber());
         login_response.put("sessionId", sessionId);
-/*
-        login_response.put("isLogin",user.getIsLogin().toString());
-*/
-/*
-        user.setIsLogin(true);
-*/
-        userRepository.save(user);
 
         return login_response;
     }
 
+    Map<String, String> sendLoginOtpForAdmin(User user) {
+
+        String otp = generateOtp();
+
+        PasswordReset passwordReset =
+                passwordResetRepository
+                        .findByEmail(user.getEmail())
+                        .orElse(new PasswordReset());
+
+        passwordReset.setEmail(user.getEmail());
+        passwordReset.setOtp(otp);
+        passwordReset.setExpiresAt(
+                LocalDateTime.now().plusMinutes(5)
+        );
+
+        passwordReset.setResetToken(null);
+        passwordReset.setResetTokenExpiresAt(null);
+
+        passwordResetRepository.save(passwordReset);
+        System.out.println(
+                "OTP SAVED FOR EMAIL = " + user.getEmail()
+        );
+        System.out.println(
+                "OTP = " + otp
+        );
+
+        emailService.sendOtp(user.getEmail(), otp);
+
+        return Map.of(
+                "Admin Otp Response",
+                "OTP sent successfully to email"
+        );
+    }
 
 
 
@@ -232,6 +277,39 @@ public class AuthService {
         passwordResetRepository.delete(passwordReset);
     }
 
+
+    public Boolean verifyOtpOFAdmin(String email, String otp) {
+
+        PasswordReset passwordReset =
+                passwordResetRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "OTP not found"
+                                )
+                        );
+
+        // Check OTP expiry
+        if (passwordReset.getExpiresAt()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException(
+                    "OTP expired"
+            );
+        }
+
+        // Check OTP
+        if (!passwordReset.getOtp().equals(otp)) {
+
+            throw new RuntimeException(
+                    "Invalid OTP"
+            );
+        }
+
+        passwordResetRepository.delete(passwordReset);
+
+        return true;
+    }
 
     private String generateOtp() {
 
