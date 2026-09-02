@@ -83,6 +83,7 @@ public class Course {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonManagedReference
+    @OrderBy("chapterOrder ASC")
     private List<Chapter> chapters = new ArrayList<>();
 
 

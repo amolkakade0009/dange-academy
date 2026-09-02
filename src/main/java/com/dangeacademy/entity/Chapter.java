@@ -39,5 +39,6 @@ public class Chapter {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonManagedReference
+    @OrderBy("topicOrder ASC")
     private List<SubTopic> subTopics = new ArrayList<>();
 }
