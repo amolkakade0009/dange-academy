@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -91,7 +92,7 @@ public class OrderService {
         order.setStatus(OrderStatus.CREATED);
         order.setAmount(course.getPrice());
         order.setCurrency("INR");
-        order.setCreatedAt(LocalDateTime.now());
+        order.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
         order.setCourse(course);
         order.setUser(user);
 
