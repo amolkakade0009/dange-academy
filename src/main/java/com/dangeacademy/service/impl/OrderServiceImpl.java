@@ -1,5 +1,6 @@
 package com.dangeacademy.service.impl;
 
+import com.dangeacademy.dto.DashboardSummaryDTO;
 import com.dangeacademy.entity.Course;
 import com.dangeacademy.entity.Order;
 import com.dangeacademy.enums.OrderStatus;
@@ -15,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.razorpay.RazorpayClient;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -110,11 +114,32 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByUser(user);
     }
 
-    @Override
-    public List<Order> getAllOrders() {
 
-        return orderRepository.findAll();
+    public List<Order> getAllOrders(LocalDate startDate, LocalDate endDate) {
+
+        // Define Indian Standard Time (IST)
+        ZoneId istZone = ZoneId.of("Asia/Kolkata");
+
+        // Default to today IN INDIA if BOTH dates are missing
+        if (startDate == null && endDate == null) {
+            startDate = LocalDate.now(istZone);
+            endDate = LocalDate.now(istZone);
+        }
+        else if (endDate == null) {
+            endDate = startDate;
+        }
+        else if (startDate == null) {
+            startDate = endDate;
+        }
+
+        // Convert LocalDate to LocalDateTime.
+        // Because the DB stores time conceptually as IST, this perfectly matches.
+        LocalDateTime startOfDay = startDate.atStartOfDay(); // 00:00:00
+        LocalDateTime endOfDay = endDate.atTime(LocalTime.MAX); // 23:59:59.999999999
+
+        return orderRepository.findByPaidAtBetweenOrderByPaidAtDesc(startOfDay, endOfDay);
     }
+
 
     @Override
     public List<Order> getOrdersByStatus(OrderStatus status) {
@@ -122,5 +147,42 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByStatus(status);
     }
 
+
+
+    public DashboardSummaryDTO getDashboardSummary(LocalDate startDate, LocalDate endDate) {
+
+        ZoneId istZone = ZoneId.of("Asia/Kolkata");
+
+        // Same LocalDate logic for IST
+        if (startDate == null && endDate == null) {
+            startDate = LocalDate.now(istZone);
+            endDate = LocalDate.now(istZone);
+        } else if (endDate == null) {
+            endDate = startDate;
+        } else if (startDate == null) {
+            startDate = endDate;
+        }
+
+        LocalDateTime startOfDay = startDate.atStartOfDay();
+        LocalDateTime endOfDay = endDate.atTime(LocalTime.MAX);
+
+        // 1. Get orders for the date range
+        List<Order> orders = orderRepository.findByPaidAtBetweenOrderByPaidAtDesc(startOfDay, endOfDay);
+
+        // 2. Calculate total amount
+        double totalAmount = orders.stream()
+                .filter(order -> order.getAmount() != null) // Safety check for null amounts
+                .filter(order -> order.getStatus() == OrderStatus.PAID) // if you only want paid orders
+                .mapToDouble(Order::getAmount)
+                .sum();
+
+        // 3. Get total students and courses from database
+        // (Assuming you want the total across the whole platform, not just the date range)
+        long totalStudents = userRepository.count();
+        long totalCourses = courseRepository.count();
+
+        // 4. Return as DTO
+        return new DashboardSummaryDTO(totalAmount, totalStudents, totalCourses);
+    }
 
 }

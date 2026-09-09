@@ -1,8 +1,10 @@
 package com.dangeacademy.service;
 
+import com.dangeacademy.dto.DashboardSummaryDTO;
 import com.dangeacademy.entity.Order;
 import com.dangeacademy.enums.OrderStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface OrderService {
@@ -18,9 +20,9 @@ public interface OrderService {
 
     List<Order> getOrdersByUser(Long userId);
 
-    List<Order> getAllOrders();
+    List<Order> getAllOrders(LocalDate startDate, LocalDate endDate);
 
     List<Order> getOrdersByStatus(OrderStatus status);
 
-
+    DashboardSummaryDTO getDashboardSummary(LocalDate startDate, LocalDate endDate);
 }

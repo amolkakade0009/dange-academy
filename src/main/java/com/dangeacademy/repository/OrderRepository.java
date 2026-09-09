@@ -5,6 +5,7 @@ import com.dangeacademy.enums.OrderStatus;
 import com.dangeacademy.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatus(OrderStatus status);
 
     List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    // Finds orders between two dates and sorts them by paidAt descending (newest first)
+    List<Order> findByPaidAtBetweenOrderByPaidAtDesc(LocalDateTime startDate, LocalDateTime endDate);
 
 
 

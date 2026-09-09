@@ -2,14 +2,17 @@ package com.dangeacademy.rzp;
 
 
 
+import com.dangeacademy.dto.DashboardSummaryDTO;
 import com.dangeacademy.entity.Order;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.razorpay.RazorpayException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +72,22 @@ public class OrderController {
 
     // Get all orders (Admin)
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
+    public ResponseEntity<List<Order>> getAllOrders(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        List<Order> orders = orderService.getAllOrders(startDate, endDate);
+        return ResponseEntity.ok(orders);
+    }
+
+
+    @GetMapping("/summary")
+    public ResponseEntity<DashboardSummaryDTO> getOrderSummary(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        DashboardSummaryDTO summary = orderService.getDashboardSummary(startDate, endDate);
+
+        return ResponseEntity.ok(summary);
     }
 }
