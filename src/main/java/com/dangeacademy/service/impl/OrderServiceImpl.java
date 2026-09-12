@@ -176,17 +176,22 @@ public class OrderServiceImpl implements OrderService {
                 .mapToDouble(Order::getAmount)
                 .sum();
 
+        // 3. Calculate total transactions
+        long totalTransactions = orders.stream()
+                .filter(order -> order.getAmount() != null)
+                .filter(order -> order.getStatus() == OrderStatus.PAID)
+                .count();
 
 
 
-        // 3. Get total students and courses and paid transactions from database
+
+        // 4. Get total students and courses from database
         // (Assuming you want the total across the whole platform, not just the date range)
         long totalStudents = userRepository.count();
         long totalCourses = courseRepository.count();
-        int totalTransactions = orderRepository.findByStatus(OrderStatus.PAID).size();
 
 
-        // 4. Return as DTO
+        // 5. Return as DTO
         return new DashboardSummaryDTO(totalAmount, totalStudents, totalCourses, totalTransactions);
     }
 

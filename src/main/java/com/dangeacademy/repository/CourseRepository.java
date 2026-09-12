@@ -13,4 +13,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByIntroVideoStatus(VideoStatus introVideoStatus);
     List<Course> findByMentorId(Long mentorId);
 
+    // Fetch courses with at least 1 student, highest enrolled first
+    List<Course> findByEnrolledCountGreaterThanOrderByEnrolledCountDesc(Integer count);
 }
